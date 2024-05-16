@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  app:
+    image: kwan:latest
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - /Users/admin/practice:/usr/src/app
+    networks:
+      - my_network
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
+  postgres:
+    image: postgres:14-alpine
+    restart: always
+    container_name: postgres
+    ports:
+      - 6432:5432
+    volumes:
+      - postgres_database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=practice
+    networks:
+      - my_network
+
+volumes:
+  postgres_database:
+    driver: local
+
+networks:
+  my_network:
+    external: true
+    name: practice_default
